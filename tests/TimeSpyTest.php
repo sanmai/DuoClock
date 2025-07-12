@@ -20,19 +20,19 @@ declare(strict_types=1);
 
 namespace Tests\DuoClock;
 
-use DuoClock\FrozenClock;
+use DuoClock\TimeSpy;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use DateTimeImmutable;
 use Tests\DuoClock\Fixtures\ExampleUsingSleep;
 use Tests\DuoClock\Fixtures\ExampleUsingTime;
 
-#[CoversClass(FrozenClock::class)]
-class FrozenClockTest extends TestCase
+#[CoversClass(TimeSpy::class)]
+class TimeSpyTest extends TestCase
 {
     public function testSetTimeUpdatesTime(): void
     {
-        $clock = new FrozenClock();
+        $clock = new TimeSpy();
         $clock->setTime(1234567890);
         $this->assertSame(1234567890, $clock->time());
         $this->assertSame(1234567890.0, $clock->microtime());
@@ -40,28 +40,28 @@ class FrozenClockTest extends TestCase
 
     public function testConstructorDefaultsToZero(): void
     {
-        $clock = new FrozenClock();
+        $clock = new TimeSpy();
         $this->assertSame(0, $clock->time());
         $this->assertSame(0.0, $clock->microtime());
     }
 
     public function testConstructorWithExplicitTime(): void
     {
-        $clock = new FrozenClock(1234567890.5);
+        $clock = new TimeSpy(1234567890.5);
         $this->assertSame(1234567890, $clock->time());
         $this->assertSame(1234567890.5, $clock->microtime());
     }
 
     public function testMicrotimeReturnsCurrentUnixTimestampWithMicroseconds(): void
     {
-        $clock = new FrozenClock();
+        $clock = new TimeSpy();
         $clock->setTime(1234567890.123456);
         $this->assertSame(1234567890.123456, $clock->microtime());
     }
 
     public function testNowReturnsDateTimeImmutable(): void
     {
-        $clock = new FrozenClock(1234567890);
+        $clock = new TimeSpy(1234567890);
         $now = $clock->now();
         $this->assertInstanceOf(DateTimeImmutable::class, $now);
         $this->assertSame(1234567890, $now->getTimestamp());
@@ -69,7 +69,7 @@ class FrozenClockTest extends TestCase
 
     public function testNowDoesNotPreserveSubseconds(): void
     {
-        $clock = new FrozenClock(1234567890.123456);
+        $clock = new TimeSpy(1234567890.123456);
         $now = $clock->now();
         $this->assertSame(1234567890, $now->getTimestamp());
         $this->assertSame('1234567890.000000', $now->format('U.u'));
@@ -77,7 +77,7 @@ class FrozenClockTest extends TestCase
 
     public function testSleepAdvancesTime(): void
     {
-        $clock = new FrozenClock(100);
+        $clock = new TimeSpy(100);
         $result = $clock->sleep(10);
         $this->assertSame(0, $result);
         $this->assertSame(110, $clock->time());
@@ -86,7 +86,7 @@ class FrozenClockTest extends TestCase
 
     public function testUsleepAdvancesTimeByMicroseconds(): void
     {
-        $clock = new FrozenClock(100.5);
+        $clock = new TimeSpy(100.5);
         $clock->usleep(500000); // 0.5 seconds
         $this->assertSame(101, $clock->time());
         $this->assertSame(101.0, $clock->microtime());
@@ -94,7 +94,7 @@ class FrozenClockTest extends TestCase
 
     public function testUsleepWithSmallMicroseconds(): void
     {
-        $clock = new FrozenClock(100.123);
+        $clock = new TimeSpy(100.123);
         $clock->usleep(1000); // 0.001 seconds
         $this->assertSame(100, $clock->time());
         $this->assertEqualsWithDelta(100.124, $clock->microtime(), 0.000001);
@@ -102,7 +102,7 @@ class FrozenClockTest extends TestCase
 
     public function testExampleUsingTime(): void
     {
-        $mock = $this->createMock(FrozenClock::class);
+        $mock = $this->createMock(TimeSpy::class);
 
         $mock->expects($this->exactly(2))
             ->method('time')
@@ -116,7 +116,7 @@ class FrozenClockTest extends TestCase
 
     public function testExampleUsingSleep(): void
     {
-        $mock = $this->createMock(FrozenClock::class);
+        $mock = $this->createMock(TimeSpy::class);
 
         $mock->expects($this->exactly(1))
             ->method('usleep')

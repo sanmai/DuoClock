@@ -16,7 +16,7 @@ I designed DuoClock to:
   * `microtime(): float`
 * Offer mockable `sleep()` and `usleep()` for test environments.
 * Mockable time methods: `now()`, `time()`, and `microtime()`.
-* Include a deterministic `FrozenClock` for testing.
+* Include a deterministic `TimeSpy` for testing.
 * Be minimal, with a lightweight design (depends only on `psr/clock`).
 * Have all classes non-final to allow easy mocking and testing.
 
@@ -63,9 +63,9 @@ $clock->usleep(1000); // real micro-sleep
 Frozen Clock, as a testing-time dependency:
 
 ```php
-use DuoClock\FrozenClock;
+use DuoClock\TimeSpy;
 
-$clock = new FrozenClock(1752321600); // Corresponds to '2025-07-12T12:00:00Z'
+$clock = new TimeSpy(1752321600); // Corresponds to '2025-07-12T12:00:00Z'
 
 $clock->time();       // 1752321600
 
@@ -78,10 +78,10 @@ $clock->microtime();  // 1752321610.005
 
 ### Mocking and Spies
 
-The recommended approach is to always use the frozen clock for testing (`$clock = new FrozenClock();`) because calls to `$clock->sleep()` and `$clock->usleep()` do not delay execution even if you do not specifically mock them.
+The recommended approach is to always use the frozen clock for testing (`$clock = new TimeSpy();`) because calls to `$clock->sleep()` and `$clock->usleep()` do not delay execution even if you do not specifically mock them.
 
 ```php
-$mock = $this->createMock(FrozenClock::class);
+$mock = $this->createMock(TimeSpy::class);
 
 $mock->expects($this->exactly(1))
     ->method('time')
@@ -92,7 +92,7 @@ $this->assertFalse($example->launch());
 ```
 
 ```php
-$mock = $this->createMock(FrozenClock::class);
+$mock = $this->createMock(TimeSpy::class);
 
 $mock->expects($this->exactly(1))
     ->method('usleep')

@@ -23,7 +23,7 @@ namespace DuoClock;
 use DateTimeImmutable;
 use Override;
 
-class FrozenClock extends DuoClock
+class TimeSpy extends DuoClock
 {
     /**
      * @var int Current unix time to mimic (int timestamp)
