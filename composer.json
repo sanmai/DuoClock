@@ -1,0 +1,51 @@
+{
+    "name": "sanmai/duoclock",
+    "description": "PHP class duoclockion tool for analyzing class structure, methods, and dependencies",
+    "license": "Apache-2.0",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alexey Kopytko",
+            "email": "alexey@kopytko.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "psr/clock": "^1.0"
+    },
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.8",
+        "friendsofphp/php-cs-fixer": "^3.17",
+        "infection/infection": ">=0.29",
+        "league/pipeline": "^0.3 || ^1.0",
+        "php-coveralls/php-coveralls": "^2.4.1",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2",
+        "phpunit/phpunit": "^11.5.25",
+        "sanmai/phpstan-rules": "^0.3.1",
+        "symfony/process": "^7.3",
+        "tumblr/chorus-timekeeper": "^0.1.1",
+        "vimeo/psalm": "^6.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "DuoClock\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\DuoClock\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "infection/extension-installer": true,
+            "phpstan/extension-installer": true
+        },
+        "optimize-autoloader": false
+    },
+    "extra": {
+        "preferred-install": "dist"
+    }
+}
