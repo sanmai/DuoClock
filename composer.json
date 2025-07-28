@@ -24,6 +24,9 @@
         "sanmai/phpstan-rules": "^0.3.1",
         "vimeo/psalm": "^6.12"
     },
+    "provide": {
+        "psr/clock-implementation": "1.0"
+    },
     "autoload": {
         "psr-4": {
             "DuoClock\\": "src/"
