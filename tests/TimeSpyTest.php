@@ -100,6 +100,42 @@ class TimeSpyTest extends TestCase
         $this->assertEqualsWithDelta(100.124, $clock->microtime(), 0.000001);
     }
 
+    public function testTimeNanosleepAdvancesTime(): void
+    {
+        $clock = new TimeSpy(100.0);
+        $result = $clock->time_nanosleep(2, 500_000_000); // 2.5 seconds
+        $this->assertTrue($result);
+        $this->assertSame(102, $clock->time());
+        $this->assertEqualsWithDelta(102.5, $clock->microtime(), 0.000001);
+    }
+
+    public function testTimeNanosleepWithOnlyNanoseconds(): void
+    {
+        $clock = new TimeSpy(100.0);
+        $result = $clock->time_nanosleep(0, 100_000_000); // 0.1 seconds
+        $this->assertTrue($result);
+        $this->assertSame(100, $clock->time());
+        $this->assertEqualsWithDelta(100.1, $clock->microtime(), 0.000001);
+    }
+
+    public function testNanosleepAdvancesTime(): void
+    {
+        $clock = new TimeSpy(100.0);
+        $result = $clock->nanosleep(2_500_000_000); // 2.5 seconds
+        $this->assertTrue($result);
+        $this->assertSame(102, $clock->time());
+        $this->assertEqualsWithDelta(102.5, $clock->microtime(), 0.000001);
+    }
+
+    public function testNanosleepWithSmallValue(): void
+    {
+        $clock = new TimeSpy(100.0);
+        $result = $clock->nanosleep(1_000_000); // 0.001 seconds (1ms)
+        $this->assertTrue($result);
+        $this->assertSame(100, $clock->time());
+        $this->assertEqualsWithDelta(100.001, $clock->microtime(), 0.000001);
+    }
+
     public function testExampleUsingTime(): void
     {
         $mock = $this->createMock(TimeSpy::class);

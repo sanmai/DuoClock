@@ -20,19 +20,24 @@ declare(strict_types=1);
 
 namespace DuoClock;
 
-use DuoClock\Interfaces\DuoClockInterface;
 use DateTimeImmutable;
+use DuoClock\Interfaces\DuoClockInterface;
+use DuoClock\Interfaces\NanoSleeperInterface;
 use DuoClock\Interfaces\SleeperInterface;
 use Override;
 use Psr\Clock\ClockInterface;
 
+use function intdiv;
 use function microtime;
 use function sleep;
 use function time;
+use function time_nanosleep;
 use function usleep;
 
-class DuoClock implements SleeperInterface, ClockInterface, DuoClockInterface
+class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface, DuoClockInterface
 {
+    protected const NANOSECONDS_PER_SECOND = 1_000_000_000;
+
     #[Override]
     public function now(): DateTimeImmutable
     {
@@ -63,5 +68,21 @@ class DuoClock implements SleeperInterface, ClockInterface, DuoClockInterface
     {
         // @infection-ignore-all
         usleep($microseconds);
+    }
+
+    #[Override]
+    public function time_nanosleep(int $seconds, int $nanoseconds): array|bool
+    {
+        // @infection-ignore-all
+        return time_nanosleep($seconds, $nanoseconds);
+    }
+
+    #[Override]
+    public function nanosleep(int $nanoseconds): array|bool
+    {
+        /** @var non-negative-int */
+        $seconds = intdiv($nanoseconds, self::NANOSECONDS_PER_SECOND);
+
+        return $this->time_nanosleep($seconds, $nanoseconds % self::NANOSECONDS_PER_SECOND);
     }
 }
