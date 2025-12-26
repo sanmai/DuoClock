@@ -3,23 +3,21 @@
 
 # DuoClock
 
-I created DuoClock as a PSR-20-compatible clock abstraction. It provides dual time access (`DateTimeImmutable`, `int`, `float`) and mockable sleep functions (`sleep`, `usleep`) for testing time-sensitive code.
+DuoClock is a PSR-20-compatible clock abstraction. It provides dual time access (`DateTimeImmutable`, `int`, `float`) and mockable sleep functions (`sleep`, `usleep`, and more) for testing time-sensitive code.
 
 ## Features
 
-I designed DuoClock to:
-
-* Implement `Psr\Clock\ClockInterface`.
-* Provide:
+* Implements `Psr\Clock\ClockInterface`.
+* Provides:
   * `now(): DateTimeImmutable`
   * `time(): int`
   * `microtime(): float`
-* Offer mockable `sleep()`, `usleep()`, `nanosleep()`, and `time_nanosleep()` for test environments.
-* Provide `getStartTick()` and `getEndTick()` for measuring elapsed time.
+* Offers mockable `sleep()`, `usleep()`, `nanosleep()`, and `time_nanosleep()` for test environments.
+* Provides `getStartTick()` and `getEndTick()` for measuring elapsed time.
 * Mockable time methods: `now()`, `time()`, and `microtime()`.
-* Include a deterministic `TimeSpy` for testing.
-* Be minimal, with a lightweight design (depends only on `psr/clock`).
-* Have all classes non-final to allow easy mocking and testing.
+* Includes a deterministic `TimeSpy` for testing.
+* Is minimal, with a lightweight design (depends only on `psr/clock`).
+* Has all classes non-final to allow easy mocking and testing.
 
 ## Installation
 

@@ -68,7 +68,7 @@ $config
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->in(__DIR__)
-            ->append([__FILE__, 'bin/console'])
+            ->append([__FILE__])
     )
 ;
 
