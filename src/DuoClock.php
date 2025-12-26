@@ -36,6 +36,8 @@ use function usleep;
 
 class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface, DuoClockInterface
 {
+    protected const int NANOSECONDS_PER_SECOND = 1_000_000_000;
+
     #[Override]
     public function now(): DateTimeImmutable
     {
@@ -71,18 +73,18 @@ class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface
     #[Override]
     public function time_nanosleep(int $seconds, int $nanoseconds): array|true
     {
-        // @infection-ignore-all
+
         // @phpstan-ignore return.type
         return time_nanosleep($seconds, $nanoseconds);
     }
 
-    // @infection-ignore-all
     #[Override]
     public function nanosleep(int $nanoseconds): array|true
     {
         /** @var non-negative-int */
-        $seconds = intdiv($nanoseconds, 1_000_000_000);
+        // @infection-ignore-all
+        $seconds = intdiv($nanoseconds, self::NANOSECONDS_PER_SECOND);
 
-        return $this->time_nanosleep($seconds, $nanoseconds % 1_000_000_000);
+        return $this->time_nanosleep($seconds, $nanoseconds % self::NANOSECONDS_PER_SECOND);
     }
 }

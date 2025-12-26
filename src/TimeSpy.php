@@ -90,7 +90,7 @@ class TimeSpy extends DuoClock
     #[Override]
     public function time_nanosleep(int $seconds, int $nanoseconds): array|true
     {
-        $this->microtime += $seconds + $nanoseconds / 1_000_000_000.0;
+        $this->microtime += $seconds + $nanoseconds / self::NANOSECONDS_PER_SECOND;
         $this->time = (int) $this->microtime;
 
         return true;
@@ -101,8 +101,8 @@ class TimeSpy extends DuoClock
     public function nanosleep(int $nanoseconds): array|true
     {
         /** @var non-negative-int */
-        $seconds = intdiv($nanoseconds, 1_000_000_000);
+        $seconds = intdiv($nanoseconds, self::NANOSECONDS_PER_SECOND);
 
-        return $this->time_nanosleep($seconds, $nanoseconds % 1_000_000_000);
+        return $this->time_nanosleep($seconds, $nanoseconds % self::NANOSECONDS_PER_SECOND);
     }
 }
