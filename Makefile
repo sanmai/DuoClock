@@ -27,10 +27,6 @@ PHPSTAN=vendor/bin/phpstan
 PHPSTAN_ARGS_TESTS=analyse src tests --level=2 -c .phpstan.neon
 PHPSTAN_ARGS_SRC=analyse -c .phpstan.src.neon
 
-# Psalm
-PSALM=vendor/bin/psalm
-PSALM_ARGS=--show-info=false
-
 # Composer
 COMPOSER=$(PHP) $(shell which composer)
 
@@ -52,7 +48,7 @@ ci-test: prerequisites
 	$(SILENT) $(PHP) $(PHPUNIT) $(PHPUNIT_COVERAGE_CLOVER) --group=$(PHPUNIT_GROUP)
 
 ci-analyze: SILENT=
-ci-analyze: prerequisites ci-phpunit ci-infection ci-phpstan ci-psalm
+ci-analyze: prerequisites ci-phpunit ci-infection ci-phpstan
 
 ci-phpunit: ci-cs
 	$(SILENT) $(PHP) $(PHPUNIT) $(PHPUNIT_ARGS)
@@ -63,9 +59,6 @@ ci-infection: ci-phpunit
 ci-phpstan: ci-cs .phpstan.neon .phpstan.src.neon
 	$(SILENT) $(PHP) $(PHPSTAN) $(PHPSTAN_ARGS_SRC) --no-progress
 	$(SILENT) $(PHP) $(PHPSTAN) $(PHPSTAN_ARGS_TESTS) --no-progress
-
-ci-psalm: ci-cs psalm.xml.dist
-	$(SILENT) $(PHP) $(PSALM) $(PSALM_ARGS) --no-cache --shepherd
 
 ci-cs: prerequisites
 	$(SILENT) $(PHP) $(PHP_CS_FIXER) $(PHP_CS_FIXER_ARGS) --dry-run --stop-on-violation fix
@@ -95,16 +88,12 @@ infection: phpunit
 	$(SILENT) $(PHP) $(INFECTION) $(INFECTION_ARGS)
 
 .PHONY: analyze
-analyze: phpstan psalm
+analyze: phpstan
 
 .PHONY: phpstan
 phpstan: cs .phpstan.src.neon .phpstan.neon
 	$(SILENT) $(PHP) $(PHPSTAN) $(PHPSTAN_ARGS_SRC)
 	$(SILENT) $(PHP) $(PHPSTAN) $(PHPSTAN_ARGS_TESTS)
-
-.PHONY: psalm
-psalm: cs psalm.xml.dist
-	$(SILENT) $(PHP) $(PSALM) $(PSALM_ARGS)
 
 .PHONY: cs
 cs: test-prerequisites
