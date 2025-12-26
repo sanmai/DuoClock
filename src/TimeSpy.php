@@ -88,7 +88,7 @@ class TimeSpy extends DuoClock
     }
 
     #[Override]
-    public function time_nanosleep(int $seconds, int $nanoseconds): array|true
+    public function time_nanosleep(int $seconds, int $nanoseconds): array|bool
     {
         $this->microtime += $seconds + $nanoseconds / self::NANOSECONDS_PER_SECOND;
         $this->time = (int) $this->microtime;
@@ -98,7 +98,7 @@ class TimeSpy extends DuoClock
 
     // @infection-ignore-all
     #[Override]
-    public function nanosleep(int $nanoseconds): array|true
+    public function nanosleep(int $nanoseconds): array|bool
     {
         /** @var non-negative-int */
         $seconds = intdiv($nanoseconds, self::NANOSECONDS_PER_SECOND);
