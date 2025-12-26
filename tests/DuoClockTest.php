@@ -72,58 +72,52 @@ class DuoClockTest extends TestCase
 
     public function testSleepActuallySleeps(): void
     {
-
-        $start = microtime(true);
-
         $clock = new DuoClock();
+
+        $timer = -microtime(true);
         $retval = $clock->sleep(1);
+        $timer += microtime(true);
 
-        $end = microtime(true);
-
-        $elapsed = $end - $start;
-        $this->assertGreaterThanOrEqual(0.9, $elapsed);
-        $this->assertLessThan(1.5, $elapsed);
+        $this->assertGreaterThanOrEqual(0.9, $timer);
+        $this->assertLessThan(1.5, $timer);
         $this->assertSame(0, $retval, 'sleep should return 0 on success');
     }
 
     public function testUsleepActuallyMicrosleeps(): void
     {
-        $start = microtime(true);
-
         $clock = new DuoClock();
-        $clock->usleep(100);
-        $end = microtime(true);
 
-        $elapsed = $end - $start;
-        $this->assertGreaterThanOrEqual(0.0001, $elapsed);
-        $this->assertLessThan(0.001, $elapsed);
+        $timer = -microtime(true);
+        $clock->usleep(100);
+        $timer += microtime(true);
+
+        $this->assertGreaterThanOrEqual(0.0001, $timer);
+        $this->assertLessThan(0.001, $timer);
     }
 
     public function testTimeNanosleepActuallySleeps(): void
     {
-        $start = microtime(true);
-
         $clock = new DuoClock();
+
+        $timer = -microtime(true);
         $result = $clock->time_nanosleep(0, 1_000_000); // 1ms
-        $end = microtime(true);
+        $timer += microtime(true);
 
         $this->assertTrue($result);
-        $elapsed = $end - $start;
-        $this->assertGreaterThanOrEqual(0.001, $elapsed);
-        $this->assertLessThan(0.01, $elapsed);
+        $this->assertGreaterThanOrEqual(0.001, $timer);
+        $this->assertLessThan(0.01, $timer);
     }
 
     public function testNanosleepActuallySleeps(): void
     {
-        $start = microtime(true);
-
         $clock = new DuoClock();
+
+        $timer = -microtime(true);
         $result = $clock->nanosleep(1_000_000); // 1ms
-        $end = microtime(true);
+        $timer += microtime(true);
 
         $this->assertTrue($result);
-        $elapsed = $end - $start;
-        $this->assertGreaterThanOrEqual(0.001, $elapsed);
-        $this->assertLessThan(0.01, $elapsed);
+        $this->assertGreaterThanOrEqual(0.001, $timer);
+        $this->assertLessThan(0.01, $timer);
     }
 }
