@@ -36,7 +36,7 @@ use function usleep;
 
 class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface, DuoClockInterface
 {
-    protected const int NANOSECONDS_PER_SECOND = 1_000_000_000;
+    protected const NANOSECONDS_PER_SECOND = 1_000_000_000;
 
     #[Override]
     public function now(): DateTimeImmutable
