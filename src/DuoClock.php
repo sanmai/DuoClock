@@ -24,6 +24,7 @@ use DateTimeImmutable;
 use DuoClock\Interfaces\DuoClockInterface;
 use DuoClock\Interfaces\NanoSleeperInterface;
 use DuoClock\Interfaces\SleeperInterface;
+use DuoClock\Interfaces\TickerInterface;
 use Override;
 use Psr\Clock\ClockInterface;
 
@@ -34,7 +35,7 @@ use function time;
 use function time_nanosleep;
 use function usleep;
 
-class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface, DuoClockInterface
+class DuoClock implements SleeperInterface, NanoSleeperInterface, TickerInterface, ClockInterface, DuoClockInterface
 {
     protected const NANOSECONDS_PER_SECOND = 1_000_000_000;
 
@@ -84,5 +85,17 @@ class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface
         $seconds = intdiv($nanoseconds, self::NANOSECONDS_PER_SECOND);
 
         return $this->time_nanosleep($seconds, $nanoseconds % self::NANOSECONDS_PER_SECOND);
+    }
+
+    #[Override]
+    public function getStartTick(): float
+    {
+        return -$this->microtime();
+    }
+
+    #[Override]
+    public function getEndTick(): float
+    {
+        return $this->microtime();
     }
 }

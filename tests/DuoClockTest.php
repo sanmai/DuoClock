@@ -120,4 +120,42 @@ class DuoClockTest extends TestCase
         $this->assertGreaterThanOrEqual(0.001, $timer);
         $this->assertLessThan(0.01, $timer);
     }
+
+    public function testGetStartTickReturnsNegativeMicrotime(): void
+    {
+        $clock = new DuoClock();
+
+        $before = -microtime(true);
+        $tick = $clock->getStartTick();
+        $after = -microtime(true);
+
+        $this->assertLessThan(0, $tick);
+        $this->assertLessThanOrEqual($before, $tick);
+        $this->assertGreaterThanOrEqual($after, $tick);
+    }
+
+    public function testGetEndTickReturnsPositiveMicrotime(): void
+    {
+        $clock = new DuoClock();
+
+        $before = microtime(true);
+        $tick = $clock->getEndTick();
+        $after = microtime(true);
+
+        $this->assertGreaterThan(0, $tick);
+        $this->assertGreaterThanOrEqual($before, $tick);
+        $this->assertLessThanOrEqual($after, $tick);
+    }
+
+    public function testTickerPatternMeasuresElapsedTime(): void
+    {
+        $clock = new DuoClock();
+
+        $timer = $clock->getStartTick();
+        $clock->usleep(1000); // 1ms
+        $timer += $clock->getEndTick();
+
+        $this->assertGreaterThanOrEqual(0.001, $timer);
+        $this->assertLessThan(0.01, $timer);
+    }
 }
