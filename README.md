@@ -14,7 +14,8 @@ I designed DuoClock to:
   * `now(): DateTimeImmutable`
   * `time(): int`
   * `microtime(): float`
-* Offer mockable `sleep()` and `usleep()` for test environments.
+* Offer mockable `sleep()`, `usleep()`, `nanosleep()`, and `time_nanosleep()` for test environments.
+* Provide `getStartTick()` and `getEndTick()` for measuring elapsed time.
 * Mockable time methods: `now()`, `time()`, and `microtime()`.
 * Include a deterministic `TimeSpy` for testing.
 * Be minimal, with a lightweight design (depends only on `psr/clock`).
@@ -42,6 +43,18 @@ interface SleeperInterface
     public function sleep(int $seconds): int;
     public function usleep(int $microseconds): void;
 }
+
+interface NanoSleeperInterface
+{
+    public function time_nanosleep(int $seconds, int $nanoseconds): array|bool;
+    public function nanosleep(int $nanoseconds): array|bool;
+}
+
+interface TickerInterface
+{
+    public function getStartTick(): float;
+    public function getEndTick(): float;
+}
 ```
 
 
@@ -58,6 +71,20 @@ $clock->microtime();  // float
 
 $clock->sleep(1);     // real sleep
 $clock->usleep(1000); // real micro-sleep
+
+$clock->nanosleep(1_500_000_000); // sleep 1.5 seconds
+$clock->time_nanosleep(1, 500_000_000); // same as above
+```
+
+### Measuring Elapsed Time
+
+```php
+$clock = new DuoClock\DuoClock();
+
+$timer = $clock->getStartTick();
+// ...work...
+$timer += $clock->getEndTick();
+// $timer now contains elapsed seconds as float
 ```
 
 TimeSpy, as a testing-time dependency:
