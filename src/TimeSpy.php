@@ -23,6 +23,8 @@ namespace DuoClock;
 use DateTimeImmutable;
 use Override;
 
+use function intdiv;
+
 class TimeSpy extends DuoClock
 {
     /**
@@ -83,5 +85,24 @@ class TimeSpy extends DuoClock
 
         // Update integer time to match
         $this->time = (int) $this->microtime;
+    }
+
+    #[Override]
+    public function time_nanosleep(int $seconds, int $nanoseconds): array|true
+    {
+        $this->microtime += $seconds + $nanoseconds / 1_000_000_000.0;
+        $this->time = (int) $this->microtime;
+
+        return true;
+    }
+
+    // @infection-ignore-all
+    #[Override]
+    public function nanosleep(int $nanoseconds): array|true
+    {
+        /** @var non-negative-int */
+        $seconds = intdiv($nanoseconds, 1_000_000_000);
+
+        return $this->time_nanosleep($seconds, $nanoseconds % 1_000_000_000);
     }
 }

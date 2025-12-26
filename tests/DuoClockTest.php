@@ -98,4 +98,32 @@ class DuoClockTest extends TestCase
         $this->assertGreaterThanOrEqual(0.0001, $elapsed);
         $this->assertLessThan(0.001, $elapsed);
     }
+
+    public function testTimeNanosleepActuallySleeps(): void
+    {
+        $start = microtime(true);
+
+        $clock = new DuoClock();
+        $result = $clock->time_nanosleep(0, 1_000_000); // 1ms
+        $end = microtime(true);
+
+        $this->assertTrue($result);
+        $elapsed = $end - $start;
+        $this->assertGreaterThanOrEqual(0.001, $elapsed);
+        $this->assertLessThan(0.01, $elapsed);
+    }
+
+    public function testNanosleepActuallySleeps(): void
+    {
+        $start = microtime(true);
+
+        $clock = new DuoClock();
+        $result = $clock->nanosleep(1_000_000); // 1ms
+        $end = microtime(true);
+
+        $this->assertTrue($result);
+        $elapsed = $end - $start;
+        $this->assertGreaterThanOrEqual(0.001, $elapsed);
+        $this->assertLessThan(0.01, $elapsed);
+    }
 }
