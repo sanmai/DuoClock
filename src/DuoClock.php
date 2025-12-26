@@ -71,18 +71,16 @@ class DuoClock implements SleeperInterface, NanoSleeperInterface, ClockInterface
     }
 
     #[Override]
-    public function time_nanosleep(int $seconds, int $nanoseconds): array|true
+    public function time_nanosleep(int $seconds, int $nanoseconds): array|bool
     {
-
-        // @phpstan-ignore return.type
+        // @infection-ignore-all
         return time_nanosleep($seconds, $nanoseconds);
     }
 
     #[Override]
-    public function nanosleep(int $nanoseconds): array|true
+    public function nanosleep(int $nanoseconds): array|bool
     {
         /** @var non-negative-int */
-        // @infection-ignore-all
         $seconds = intdiv($nanoseconds, self::NANOSECONDS_PER_SECOND);
 
         return $this->time_nanosleep($seconds, $nanoseconds % self::NANOSECONDS_PER_SECOND);

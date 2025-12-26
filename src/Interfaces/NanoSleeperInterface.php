@@ -26,14 +26,14 @@ interface NanoSleeperInterface
      * @param non-negative-int $seconds
      * @param non-negative-int $nanoseconds
      *
-     * @return array{seconds: int, nanoseconds: int}|true
+     * @return array{seconds: non-negative-int, nanoseconds: non-negative-int}|bool
      */
-    public function time_nanosleep(int $seconds, int $nanoseconds): array|true;
+    public function time_nanosleep(int $seconds, int $nanoseconds): array|bool;
 
     /**
      * @param non-negative-int $nanoseconds
      *
-     * @return array{seconds: int, nanoseconds: int}|true
+     * @return array{seconds: non-negative-int, nanoseconds: non-negative-int}|bool
      */
-    public function nanosleep(int $nanoseconds): array|true;
+    public function nanosleep(int $nanoseconds): array|bool;
 }
