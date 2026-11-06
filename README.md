@@ -104,7 +104,7 @@ $clock->usleep(5000); // advances virtual clock by 0.005 seconds
 
 $clock->time();       // 1752321610
 $clock->microtime();  // 1752321610.005
-$clock->hrtime();     // 10005000000, starts at zero, only sleep calls advance it
+$clock->hrtime();     // 10005000000, starts at zero, setTime() does not change it
 ```
 
 ### Mocking and Spies

@@ -38,7 +38,7 @@ class TimeSpy extends DuoClock
     private float $microtime = 0.0;
 
     /**
-     * @var int Monotonic clock value in nanoseconds; only sleep calls advance it
+     * @var int Monotonic clock value in nanoseconds; setTime() does not change it
      */
     private int $hrtime = 0;
 
