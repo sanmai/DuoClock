@@ -12,9 +12,10 @@ DuoClock is a PSR-20-compatible clock abstraction. It provides dual time access 
   * `now(): DateTimeImmutable`
   * `time(): int`
   * `microtime(): float`
+  * `hrtime(): int` (monotonic nanoseconds)
 * Offers mockable `sleep()`, `usleep()`, `nanosleep()`, and `time_nanosleep()` for test environments.
 * Provides `getStartTick()` and `getEndTick()` for measuring elapsed time.
-* Mockable time methods: `now()`, `time()`, and `microtime()`.
+* Mockable time methods: `now()`, `time()`, `microtime()`, and `hrtime()`.
 * Includes a deterministic `TimeSpy` for testing.
 * Is minimal, with a lightweight design (depends only on `psr/clock`).
 * Has all classes non-final to allow easy mocking and testing.
@@ -53,6 +54,11 @@ interface TickerInterface
     public function getStartTick(): float;
     public function getEndTick(): float;
 }
+
+interface MonotonicClockInterface
+{
+    public function hrtime(): int;
+}
 ```
 
 
@@ -66,6 +72,7 @@ $clock = new DuoClock\DuoClock();
 $clock->now();        // DateTimeImmutable
 $clock->time();       // int
 $clock->microtime();  // float
+$clock->hrtime();     // int, nanoseconds, same as hrtime(true)
 
 $clock->sleep(1);     // real sleep
 $clock->usleep(1000); // real micro-sleep
@@ -97,6 +104,7 @@ $clock->usleep(5000); // advances virtual clock by 0.005 seconds
 
 $clock->time();       // 1752321610
 $clock->microtime();  // 1752321610.005
+$clock->hrtime();     // 10005000000, starts at zero, only sleep calls advance it
 ```
 
 ### Mocking and Spies

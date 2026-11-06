@@ -25,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+use function hrtime;
 use function microtime;
 use function time;
 
@@ -66,6 +67,18 @@ class DuoClockTest extends TestCase
         $after = microtime(true);
 
         $this->assertIsFloat($time);
+        $this->assertGreaterThanOrEqual($before, $time);
+        $this->assertLessThanOrEqual($after, $time);
+    }
+
+    public function testHrtimeReturnsMonotonicNanoseconds(): void
+    {
+        $clock = new DuoClock();
+
+        $before = hrtime(true);
+        $time = $clock->hrtime();
+        $after = hrtime(true);
+
         $this->assertGreaterThanOrEqual($before, $time);
         $this->assertLessThanOrEqual($after, $time);
     }
