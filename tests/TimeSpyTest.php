@@ -43,6 +43,7 @@ class TimeSpyTest extends TestCase
         $clock = new TimeSpy();
         $this->assertSame(0, $clock->time());
         $this->assertSame(0.0, $clock->microtime());
+        $this->assertSame(0, $clock->hrtime());
     }
 
     public function testConstructorWithExplicitTime(): void
@@ -57,6 +58,13 @@ class TimeSpyTest extends TestCase
         $clock = new TimeSpy();
         $clock->setTime(1234567890.123456);
         $this->assertSame(1234567890.123456, $clock->microtime());
+    }
+
+    public function testSetTimeDoesNotAffectHrtime(): void
+    {
+        $clock = new TimeSpy(1234567890);
+        $clock->setTime(100);
+        $this->assertSame(0, $clock->hrtime());
     }
 
     public function testNowReturnsDateTimeImmutable(): void
@@ -82,6 +90,7 @@ class TimeSpyTest extends TestCase
         $this->assertSame(0, $result);
         $this->assertSame(110, $clock->time());
         $this->assertSame(110.0, $clock->microtime());
+        $this->assertSame(10_000_000_000, $clock->hrtime());
     }
 
     public function testUsleepAdvancesTimeByMicroseconds(): void
@@ -90,6 +99,7 @@ class TimeSpyTest extends TestCase
         $clock->usleep(500000); // 0.5 seconds
         $this->assertSame(101, $clock->time());
         $this->assertSame(101.0, $clock->microtime());
+        $this->assertSame(500_000_000, $clock->hrtime());
     }
 
     public function testUsleepWithSmallMicroseconds(): void
@@ -107,6 +117,7 @@ class TimeSpyTest extends TestCase
         $this->assertTrue($result);
         $this->assertSame(102, $clock->time());
         $this->assertEqualsWithDelta(102.5, $clock->microtime(), 0.000001);
+        $this->assertSame(2_500_000_000, $clock->hrtime());
     }
 
     public function testTimeNanosleepWithOnlyNanoseconds(): void
@@ -116,6 +127,7 @@ class TimeSpyTest extends TestCase
         $this->assertTrue($result);
         $this->assertSame(100, $clock->time());
         $this->assertEqualsWithDelta(100.1, $clock->microtime(), 0.000001);
+        $this->assertSame(100_000_000, $clock->hrtime());
     }
 
     public function testNanosleepAdvancesTime(): void
@@ -134,6 +146,17 @@ class TimeSpyTest extends TestCase
         $this->assertTrue($result);
         $this->assertSame(100, $clock->time());
         $this->assertEqualsWithDelta(100.001, $clock->microtime(), 0.000001);
+        $this->assertSame(1_000_000, $clock->hrtime());
+    }
+
+    public function testHrtimeAccumulatesExactNanoseconds(): void
+    {
+        $clock = new TimeSpy(1752321600);
+        $clock->sleep(1);
+        $clock->usleep(1);
+        $clock->nanosleep(1);
+        $clock->sleep(1);
+        $this->assertSame(2_000_001_001, $clock->hrtime());
     }
 
     public function testExampleUsingTime(): void

@@ -37,6 +37,11 @@ class TimeSpy extends DuoClock
      */
     private float $microtime = 0.0;
 
+    /**
+     * @var int Monotonic clock value in nanoseconds; setTime() does not change it
+     */
+    private int $hrtime = 0;
+
     public function __construct(float|int $time = 0.0)
     {
         $this->setTime($time);
@@ -68,11 +73,18 @@ class TimeSpy extends DuoClock
     }
 
     #[Override]
+    public function hrtime(): int
+    {
+        return $this->hrtime;
+    }
+
+    #[Override]
     public function sleep(int $seconds): int
     {
         // Advance the frozen time by the specified number of seconds
         $this->time += $seconds;
         $this->microtime += $seconds;
+        $this->hrtime += $seconds * self::NANOSECONDS_PER_SECOND;
 
         return 0;
     }
@@ -85,6 +97,8 @@ class TimeSpy extends DuoClock
 
         // Update integer time to match
         $this->time = (int) $this->microtime;
+
+        $this->hrtime += $microseconds * 1_000;
     }
 
     #[Override]
@@ -92,6 +106,7 @@ class TimeSpy extends DuoClock
     {
         $this->microtime += $seconds + $nanoseconds / self::NANOSECONDS_PER_SECOND;
         $this->time = (int) $this->microtime;
+        $this->hrtime += $seconds * self::NANOSECONDS_PER_SECOND + $nanoseconds;
 
         return true;
     }

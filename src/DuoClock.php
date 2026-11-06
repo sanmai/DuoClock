@@ -22,12 +22,14 @@ namespace DuoClock;
 
 use DateTimeImmutable;
 use DuoClock\Interfaces\DuoClockInterface;
+use DuoClock\Interfaces\MonotonicClockInterface;
 use DuoClock\Interfaces\NanoSleeperInterface;
 use DuoClock\Interfaces\SleeperInterface;
 use DuoClock\Interfaces\TickerInterface;
 use Override;
 use Psr\Clock\ClockInterface;
 
+use function hrtime;
 use function intdiv;
 use function microtime;
 use function sleep;
@@ -35,7 +37,7 @@ use function time;
 use function time_nanosleep;
 use function usleep;
 
-class DuoClock implements SleeperInterface, NanoSleeperInterface, TickerInterface, ClockInterface, DuoClockInterface
+class DuoClock implements SleeperInterface, NanoSleeperInterface, TickerInterface, ClockInterface, DuoClockInterface, MonotonicClockInterface
 {
     protected const NANOSECONDS_PER_SECOND = 1_000_000_000;
 
@@ -55,6 +57,12 @@ class DuoClock implements SleeperInterface, NanoSleeperInterface, TickerInterfac
     public function microtime(): float
     {
         return microtime(true);
+    }
+
+    #[Override]
+    public function hrtime(): int
+    {
+        return hrtime(true);
     }
 
     #[Override]
