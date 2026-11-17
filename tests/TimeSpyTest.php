@@ -27,6 +27,9 @@ use DateTimeImmutable;
 use Tests\DuoClock\Fixtures\ExampleUsingSleep;
 use Tests\DuoClock\Fixtures\ExampleUsingTime;
 
+use function date_default_timezone_get;
+use function date_default_timezone_set;
+
 #[CoversClass(TimeSpy::class)]
 class TimeSpyTest extends TestCase
 {
@@ -73,6 +76,21 @@ class TimeSpyTest extends TestCase
         $now = $clock->now();
         $this->assertInstanceOf(DateTimeImmutable::class, $now);
         $this->assertSame(1234567890, $now->getTimestamp());
+    }
+
+    public function testNowUsesDefaultTimezone(): void
+    {
+        $timezone = date_default_timezone_get();
+        date_default_timezone_set('Asia/Tokyo');
+
+        try {
+            $now = (new TimeSpy(1752321600))->now();
+        } finally {
+            date_default_timezone_set($timezone);
+        }
+
+        $this->assertSame('Asia/Tokyo', $now->getTimezone()->getName());
+        $this->assertSame('2025-07-12T21:00:00+09:00', $now->format(DateTimeImmutable::ATOM));
     }
 
     public function testNowDoesNotPreserveSubseconds(): void
