@@ -84,13 +84,13 @@ class TimeSpyTest extends TestCase
         date_default_timezone_set('Asia/Tokyo');
 
         try {
-            $now = (new TimeSpy(1752321600))->now();
+            $now = (new TimeSpy(1234567890))->now();
         } finally {
             date_default_timezone_set($timezone);
         }
 
         $this->assertSame('Asia/Tokyo', $now->getTimezone()->getName());
-        $this->assertSame('2025-07-12T21:00:00+09:00', $now->format(DateTimeImmutable::ATOM));
+        $this->assertSame('2009-02-14T08:31:30+09:00', $now->format(DateTimeImmutable::ATOM));
     }
 
     public function testNowDoesNotPreserveSubseconds(): void
